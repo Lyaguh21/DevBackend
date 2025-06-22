@@ -1,32 +1,56 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { AuthDto } from './dto/Authdto';
-import { RegisterDto } from './dto/RegisterDto';
+import { AuthDto } from './dto/request/Auth.dto';
+import { RegisterDto } from './dto/request/Register.dto';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/schemas/userSchema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { HashService } from './hash.service';
+import { User } from 'src/schemas/userSchema';
+import { AuthJWTService } from './authJWT.service';
 
 @Injectable()
 export class AuthService {
   private readonly JWT_SECRET: string;
 
   constructor(
-    private jwtService: JwtService,
     private configService: ConfigService,
     private hashService: HashService,
     private userService: UsersService,
+    private authJwtService: AuthJWTService,
   ) {
-    const secret = this.configService.get<string>('JWT_SECRET_KEY');
-    if (!secret) {
-      throw new Error('JWT_SECRET_KEY is not defined in the environment variables');
-    }
-    this.JWT_SECRET = secret;
+    // const secret = this.configService.get<string>('JWT_SECRET_KEY');
+    // if (!secret) {
+    //   throw new Error(
+    //     'JWT_SECRET_KEY is not defined in the environment variables',
+    //   );
+    // }
+    // this.JWT_SECRET = secret;
   }
 
-  async auth(dto: AuthDto) {}
+  async auth(dto: AuthDto) {
+    const nickname = dto.nickname.trim();
+
+    const user = await this.userService.GetByNickname(nickname);
+    if (!user) {
+      throw new ConflictException(
+        'Неправильный логин или пароль',
+      );
+    }
+    const passwordExists = await this.hashService.validatePassword(
+      dto.password.trim(),
+      user.password,
+    );
+
+    if (!passwordExists) {
+      throw new ConflictException(
+        'Неправильный логин или пароль',
+      );
+    }
+
+    var result = await this.authJwtService.createAuthJWT(user.id)
+
+    return result
+  }
 
   public async register(dto: RegisterDto) {
     const email = dto.email.trim();
@@ -34,13 +58,12 @@ export class AuthService {
     const fn = dto.firstName.trim();
     const ln = dto.lastName.trim();
 
-    const emailExists = await this.userService.emailExists(email);
-    const nicknameExists = await this.userService.nicknameExists(nickname);
+    const emailExists = await this.userService.GetIDByEmail(email);
+    const nicknameExists = await this.userService.GetIDByNickname(nickname);
 
     if (emailExists) {
       throw new ConflictException('Такой email уже зарегистрирован');
     }
-
     if (nicknameExists) {
       throw new ConflictException('Никнейм занят');
     }
