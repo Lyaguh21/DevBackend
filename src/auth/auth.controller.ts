@@ -8,7 +8,7 @@ import { AccessTokenResponse } from './dto/response/AccessToken.dto';
 import { User } from 'src/schemas/userSchema';
 
 @ApiTags('Auth')
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private authService: AuthService) {}
 

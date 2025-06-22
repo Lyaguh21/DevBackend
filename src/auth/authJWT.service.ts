@@ -10,9 +10,20 @@ export class AuthJWTService {
     private configService: ConfigService,
   ) {}
 
-  async createAuthJWT(id: string): Promise<AccessTokenResponse> {
-    const token = await this.jwtService.signAsync(id);
+  async createAuthJWT(userId: string): Promise<AccessTokenResponse> {
+    const payload = { 
+      sub: userId,
+    };
 
-    return { JWT_TOKEN: token };
+    const token = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get<string>('JWT_SECRET'),
+      expiresIn: this.configService.get<string>('JWT_EXPIRES_IN', '60s'),
+    });
+
+    return { 
+      access_token: token,
+      token_type: 'Bearer',
+      expires_in: this.configService.get<string>('JWT_EXPIRES_IN', '60s'),
+    };
   }
 }

@@ -4,5 +4,13 @@ import { IsString } from 'class-validator';
 export class AccessTokenResponse {
   @ApiProperty()
   @IsString()
-  JWT_TOKEN: string;
+  access_token: string;
+
+  @ApiProperty()
+  @IsString()
+  token_type?: string;
+
+  @ApiProperty()
+  @IsString()
+  expires_in?: string;
 }
