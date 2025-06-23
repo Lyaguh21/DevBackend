@@ -30,6 +30,6 @@ export class AuthJWTService {
       maxAge: parseInt(expiresIn) * 1000,
     })
 
-    return {message: 'Токен у тебя в куку ебись сам как хочешь'}
+    return {message: 'Токен у тебя в куки, ебись сам как хочешь'}
   }
 }
