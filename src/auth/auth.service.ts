@@ -17,15 +17,7 @@ export class AuthService {
     private hashService: HashService,
     private userService: UsersService,
     private authJwtService: AuthJWTService,
-  ) {
-    // const secret = this.configService.get<string>('JWT_SECRET_KEY');
-    // if (!secret) {
-    //   throw new Error(
-    //     'JWT_SECRET_KEY is not defined in the environment variables',
-    //   );
-    // }
-    // this.JWT_SECRET = secret;
-  }
+  ) {}
 
   async auth(dto: AuthDto) {
     const nickname = dto.nickname.trim();
@@ -47,7 +39,7 @@ export class AuthService {
       );
     }
 
-    var result = await this.authJwtService.createAuthJWT(user.id)
+    var result = await this.authJwtService.SetAuthCookie(user.id)
 
     return result
   }

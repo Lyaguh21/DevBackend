@@ -17,8 +17,8 @@ export class AuthController {
     return this.authService.register(body);
   }
 
-  @Post('auth')
-  async auth(@Body() body: AuthDto): Promise<AccessTokenResponse>{
+  @Post('login')
+  async auth(@Body() body: AuthDto){
     return this.authService.auth(body)
   }
 }
