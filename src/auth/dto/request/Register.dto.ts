@@ -30,13 +30,7 @@ export class RegisterDto {
   password: string;
 
   @ApiProperty()
-  @Prop({
-    type: String,
-    enum: ['Frontend Developer', 'HR'],
-  })
   @IsString()
   @IsNotEmpty()
   role: string;
-
-
 }

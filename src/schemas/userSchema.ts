@@ -21,8 +21,6 @@ export class User {
   password: string;
 
   @Prop({
-    type: String,
-    enum: ['Frontend Developer', 'HR'],
     required: true,
   })
   role: string;
