@@ -7,6 +7,7 @@ import { UsersService } from 'src/users/users.service';
 import { HashService } from './hash.service';
 import { User } from 'src/schemas/userSchema';
 import { AuthJWTService } from './authJWT.service';
+import { LoginResponseDto } from './dto/response/LoginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,14 +20,12 @@ export class AuthService {
     private authJwtService: AuthJWTService,
   ) {}
 
-  async auth(dto: AuthDto) {
+  async auth(dto: AuthDto): Promise<LoginResponseDto> {
     const nickname = dto.nickname.trim();
 
     const user = await this.userService.GetByNickname(nickname);
     if (!user) {
-      throw new ConflictException(
-        'Неправильный логин или пароль',
-      );
+      throw new ConflictException('Неверный');
     }
     const passwordExists = await this.hashService.validatePassword(
       dto.password.trim(),
@@ -34,17 +33,20 @@ export class AuthService {
     );
 
     if (!passwordExists) {
-      throw new ConflictException(
-        'Неправильный логин или пароль',
-      );
+      throw new ConflictException('Неверный логин или пароль');
     }
 
-    var result = await this.authJwtService.SetAuthCookie(user.id)
+    var token = await this.authJwtService.createAuthJWT(user.id);
 
-    return result
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      role: user.role,
+      JWTtoken: token.access_token,
+    };
   }
 
-  public async register(dto: RegisterDto) {
+  public async register(dto: RegisterDto): Promise<LoginResponseDto> {
     const email = dto.email.trim();
     const nickname = dto.nickname.trim();
     const fn = dto.firstName.trim();
@@ -68,7 +70,15 @@ export class AuthService {
       password: await this.hashService.createHashPassword(dto.password),
       role: dto.role,
     });
+    console.log(newUser)
+    console.log(newUser._id.toString())
+    const token = await this.authJwtService.createAuthJWT(newUser._id.toString());
 
-    return newUser;
+    return {
+      id: newUser._id.toString(),
+      nickname: newUser.nickname,
+      role: newUser.role,
+      JWTtoken: token.access_token,
+    };
   }
 }

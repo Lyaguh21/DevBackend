@@ -8,9 +8,10 @@ import { User } from 'src/schemas/userSchema';
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
 
-  create(dto: RegisterDto): Promise<User> {
-    const createUser = new this.userModel(dto);
-    return createUser.save();
+  async create(dto: RegisterDto): Promise<User> {
+    const createdUser = new this.userModel(dto);
+    const savedUser = await createdUser.save();
+    return savedUser.toObject();
   }
 
   async GetIDByNickname(nickname: string) {

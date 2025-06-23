@@ -1,8 +1,8 @@
 import { Injectable, Res } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { AccessTokenResponse } from './dto/response/AccessToken.dto';
 import { response } from 'express';
+import { AccessTokenResponse } from './dto/response/AccessToken.dto';
 
 @Injectable()
 export class AuthJWTService {
@@ -11,25 +11,20 @@ export class AuthJWTService {
     private configService: ConfigService,
   ) {}
 
-  async SetAuthCookie(userId: string) {
+    async createAuthJWT(userId: string): Promise<AccessTokenResponse> {
     const payload = { 
-      sub: userId
+      sub: userId,
     };
-
-    const expiresIn = this.configService.get<string>('JWT_EXPIRES_IN', '3600s');
-
 
     const token = await this.jwtService.signAsync(payload, {
       secret: this.configService.get<string>('JWT_SECRET'),
-      expiresIn: expiresIn,
+      expiresIn: this.configService.get<string>('JWT_EXPIRES_IN', '60s'),
     });
 
-    response.cookie("access_token", token, {
-      httpOnly: true,
-      sameSite: 'strict',
-      maxAge: parseInt(expiresIn) * 1000,
-    })
-
-    return {message: 'Токен у тебя в куки, ебись сам как хочешь'}
+    return { 
+      access_token: token,
+      token_type: 'Bearer',
+      expires_in: this.configService.get<string>('JWT_EXPIRES_IN', '60s'),
+    };
   }
 }
