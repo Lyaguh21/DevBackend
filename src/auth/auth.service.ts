@@ -1,20 +1,15 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/request/Auth.dto';
 import { RegisterDto } from './dto/request/Register.dto';
 import { UsersService } from 'src/users/users.service';
 import { HashService } from './hash.service';
-import { User } from 'src/schemas/userSchema';
 import { AuthJWTService } from './authJWT.service';
 import { LoginResponseDto } from './dto/response/LoginResponse.dto';
 
 @Injectable()
 export class AuthService {
-  private readonly JWT_SECRET: string;
-
   constructor(
-    private configService: ConfigService,
     private hashService: HashService,
     private userService: UsersService,
     private authJwtService: AuthJWTService,
@@ -23,7 +18,7 @@ export class AuthService {
   async auth(dto: AuthDto): Promise<LoginResponseDto> {
     const nickname = dto.nickname.trim();
 
-    const user = await this.userService.GetByNickname(nickname);
+    const user = await this.userService.GetUserByNickname(nickname);
     if (!user) {
       throw new ConflictException('Неверный');
     }
@@ -70,9 +65,9 @@ export class AuthService {
       password: await this.hashService.createHashPassword(dto.password),
       role: dto.role,
     });
-    console.log(newUser)
-    console.log(newUser._id.toString())
-    const token = await this.authJwtService.createAuthJWT(newUser._id.toString());
+    const token = await this.authJwtService.createAuthJWT(
+      newUser._id.toString(),
+    );
 
     return {
       id: newUser._id.toString(),

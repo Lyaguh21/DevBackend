@@ -22,17 +22,13 @@ export class UsersService {
     return user ? user._id.toString() : null;
   }
 
-
-  async GetIDByEmail(email: string){
-    const user = await this.userModel
-      .findOne({ email })
-      .select('_id')
-      .exec();
+  async GetIDByEmail(email: string) {
+    const user = await this.userModel.findOne({ email }).select('_id').exec();
     return user ? user._id.toString() : null;
   }
 
-  async GetByNickname(nickname: string){
-    const user = await this.userModel.findOne({nickname}).exec();
-    return user
+  async GetUserByNickname(nickname: string) {
+    const user = await this.userModel.findOne({ nickname }).exec();
+    return user;
   }
 }
