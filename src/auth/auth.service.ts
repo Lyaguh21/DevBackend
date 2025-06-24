@@ -25,7 +25,7 @@ export class AuthService {
 
     const user = await this.userService.GetByNickname(nickname);
     if (!user) {
-      throw new ConflictException('Неверный');
+      throw new ConflictException('Такого пользователя не существует');
     }
     const passwordExists = await this.hashService.validatePassword(
       dto.password.trim(),
@@ -70,9 +70,11 @@ export class AuthService {
       password: await this.hashService.createHashPassword(dto.password),
       role: dto.role,
     });
-    console.log(newUser)
-    console.log(newUser._id.toString())
-    const token = await this.authJwtService.createAuthJWT(newUser._id.toString());
+    console.log(newUser);
+    console.log(newUser._id.toString());
+    const token = await this.authJwtService.createAuthJWT(
+      newUser._id.toString(),
+    );
 
     return {
       id: newUser._id.toString(),
