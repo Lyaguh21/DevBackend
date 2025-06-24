@@ -31,7 +31,7 @@ export class UserProfileService {
     return profile;
   }
 
-  async UpdateProfile(dto: UpdateUserProfileDto) {
-    const profile = this.userProfileModel.updateOne()
-  }
+  // async UpdateProfile(dto: UpdateUserProfileDto) {
+  //   const profile = this.userProfileModel.updateOne();
+  // }
 }

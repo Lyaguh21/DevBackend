@@ -65,11 +65,6 @@ export class AuthService {
       password: await this.hashService.createHashPassword(dto.password),
       role: dto.role,
     });
-<<<<<<< HEAD
-    console.log(newUser);
-    console.log(newUser._id.toString());
-=======
->>>>>>> 04307a83f1110dfa5d259a28f0d69660c3fba07c
     const token = await this.authJwtService.createAuthJWT(
       newUser._id.toString(),
     );
