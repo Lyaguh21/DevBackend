@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { NotFoundException } from '@nestjs/common';
 import { UserProfile } from 'src/schemas/userProfileSchema';
 import { User } from 'src/schemas/userSchema';
 import { UpdateUserProfileDto } from './dto/request/UpdateUserProfile.dto';
@@ -17,7 +18,7 @@ export class UserProfileService {
       userId: new Types.ObjectId(dto.id),
       firstName: dto.firstName,
       lastName: dto.lastName,
-      role: dto.role, 
+      role: dto.role,
       description: '',
       workplace: '',
       portfolio: [],
@@ -26,15 +27,36 @@ export class UserProfileService {
     return profile.save();
   }
 
-  async GetProfileByID(id: string): Promise<UserProfile> {
-    const profile = await this.userProfileModel.findOne({userId: new Types.ObjectId(id)}).exec();
-    if (!profile) {
-      throw new Error('Пользователь не найден');
+
+
+async GetProfileByID(id: string): Promise<UserProfile> {
+  const profile = await this.userProfileModel
+    .findOne({ userId: new Types.ObjectId(id) })
+    .lean()
+    .exec();
+  if (!profile) {
+    throw new NotFoundException('Профиль не найден');
+  }
+  return profile;
+}
+
+  async UpdateProfile(dto: UpdateUserProfileDto, userId: string) {
+    const profile = this.userProfileModel.findOneAndUpdate(
+      { userId: new Types.ObjectId(userId) },
+      {
+        firstName: dto.firstName,
+        lastName: dto.lastName,
+        role: dto.role,
+        description: dto.description,
+        workplace: dto.workplace,
+      },
+      { new: true },
+    ).exec();
+
+     if (!profile) {
+        throw new Error('Не удалось обновить профиль');
     }
+
     return profile;
   }
-
-  // async UpdateProfile(dto: UpdateUserProfileDto) {
-  //   const profile = this.userProfileModel.updateOne();
-  // }
 }

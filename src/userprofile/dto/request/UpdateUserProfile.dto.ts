@@ -6,16 +6,12 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 export class UpdateUserProfileDto {
   @ApiProperty()
   @IsString()
-  id: string;
-  
-  @ApiProperty()
-  @IsString()
   firstName?: string;
 
   @ApiProperty()
   @IsString()
   lastName?: string;
-  
+
   @ApiProperty()
   @IsString()
   description?: string;

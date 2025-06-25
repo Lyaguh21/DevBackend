@@ -9,6 +9,7 @@ import { HashService } from "./hash.service";
 import { UserProfileModule } from "src/userprofile/userProfile.module";
 import { UserProfile } from "src/schemas/userProfileSchema";
 import { UserProfileService } from "src/userprofile/userProfile.service";
+import { UserProfileController } from "src/userprofile/userProfile.controller";
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { UserProfileService } from "src/userprofile/userProfile.service";
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UserProfileController],
   providers: [
     AuthService,
     AuthJWTService,
