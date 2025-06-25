@@ -6,6 +6,7 @@ import { UsersService } from 'src/users/users.service';
 import { HashService } from './hash.service';
 import { AuthJWTService } from './authJWT.service';
 import { LoginResponseDto } from './dto/response/LoginResponse.dto';
+import { UserProfileService } from 'src/userprofile/userProfile.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     private hashService: HashService,
     private userService: UsersService,
     private authJwtService: AuthJWTService,
+    private userProfileService: UserProfileService,
   ) {}
 
   async auth(dto: AuthDto): Promise<LoginResponseDto> {
@@ -22,6 +24,12 @@ export class AuthService {
     if (!user) {
       throw new ConflictException('Такого пользователя не существует');
     }
+
+    const userProfile = await this.userProfileService.GetProfileByID(user._id.toString());
+    if (!userProfile) {
+      throw new ConflictException('Такого пользователя не существует');
+    }
+
     const passwordExists = await this.hashService.validatePassword(
       dto.password.trim(),
       user.password,
@@ -36,7 +44,7 @@ export class AuthService {
     return {
       id: user.id,
       nickname: user.nickname,
-      role: user.role,
+      role: userProfile.role,
       JWTtoken: token.access_token,
     };
   }
@@ -58,21 +66,26 @@ export class AuthService {
     }
 
     const newUser = await this.userService.create({
-      firstName: fn,
-      lastName: ln,
       nickname: nickname,
       email: email,
       password: await this.hashService.createHashPassword(dto.password),
-      role: dto.role,
     });
+
     const token = await this.authJwtService.createAuthJWT(
       newUser._id.toString(),
     );
 
+    const UserProfile = await this.userProfileService.create({
+      id: newUser._id.toString(),
+      firstName: fn,
+      lastName: ln,
+      role: dto.role,
+    });
+
     return {
       id: newUser._id.toString(),
       nickname: newUser.nickname,
-      role: newUser.role,
+      role: UserProfile.role,
       JWTtoken: token.access_token,
     };
   }

@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { UserProfile } from 'src/schemas/userProfileSchema';
 import { User } from 'src/schemas/userSchema';
 import { UpdateUserProfileDto } from './dto/request/UpdateUserProfile.dto';
+import { CreateUserProfileDto } from './dto/request/CreateProfile.dto';
 
 @Injectable()
 export class UserProfileService {
@@ -11,13 +12,15 @@ export class UserProfileService {
     @InjectModel(UserProfile.name) private userProfileModel: Model<UserProfile>,
   ) {}
 
-  async createProfile(user: User): Promise<UserProfile> {
+  async create(dto: CreateUserProfileDto): Promise<UserProfile> {
     const profile = new this.userProfileModel({
-      userId: user._id,
+      userId: dto.id,
+      firstName: dto.firstName,
+      lastName: dto.lastName,
+      role: dto.role, 
       description: '',
       workplace: '',
       portfolio: [],
-      ...user,
     });
 
     return profile.save();

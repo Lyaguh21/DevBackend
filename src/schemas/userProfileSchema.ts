@@ -15,9 +15,6 @@ export class UserProfile {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop({ unique: true, required: true })
-  nickname: string;
-
   @Prop({ required: true })
   role: string;
 

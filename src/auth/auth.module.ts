@@ -6,11 +6,15 @@ import { UsersModule } from "../users/users.module";
 import { AuthService } from "./auth.service";
 import { AuthJWTService } from "./authJWT.service";
 import { HashService } from "./hash.service";
+import { UserProfileModule } from "src/userprofile/userProfile.module";
+import { UserProfile } from "src/schemas/userProfileSchema";
+import { UserProfileService } from "src/userprofile/userProfile.service";
 
 @Module({
   imports: [
     ConfigModule,
     UsersModule,
+    UserProfileModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -25,6 +29,7 @@ import { HashService } from "./hash.service";
     AuthService,
     AuthJWTService,
     HashService,
+    UserProfileService,
   ],
   exports: [
     JwtModule,

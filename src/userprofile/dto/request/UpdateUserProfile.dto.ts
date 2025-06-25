@@ -15,11 +15,7 @@ export class UpdateUserProfileDto {
   @ApiProperty()
   @IsString()
   lastName?: string;
-
-  //   @ApiProperty()
-  //   @IsString()
-  //   nickname?: string;
-
+  
   @ApiProperty()
   @IsString()
   description?: string;
