@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { UserProfile } from 'src/schemas/userProfileSchema';
 import { User } from 'src/schemas/userSchema';
 import { UpdateUserProfileDto } from './dto/request/UpdateUserProfile.dto';
@@ -14,7 +14,7 @@ export class UserProfileService {
 
   async create(dto: CreateUserProfileDto): Promise<UserProfile> {
     const profile = new this.userProfileModel({
-      userId: dto.id,
+      userId: new Types.ObjectId(dto.id),
       firstName: dto.firstName,
       lastName: dto.lastName,
       role: dto.role, 
@@ -27,7 +27,7 @@ export class UserProfileService {
   }
 
   async GetProfileByID(id: string): Promise<UserProfile> {
-    const profile = await this.userProfileModel.findById(id).exec();
+    const profile = await this.userProfileModel.findOne({userId: new Types.ObjectId(id)}).exec();
     if (!profile) {
       throw new Error('Пользователь не найден');
     }
