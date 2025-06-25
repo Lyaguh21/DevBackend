@@ -25,7 +25,7 @@ import { UserProfileController } from "src/userprofile/userProfile.controller";
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController, UserProfileController],
+  controllers: [AuthController],
   providers: [
     AuthService,
     AuthJWTService,
