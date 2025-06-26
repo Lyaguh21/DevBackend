@@ -9,6 +9,9 @@ export class Project {
   _id: Types.ObjectId;
 
   @Prop({ required: true })
+  userId: string;
+
+  @Prop({ required: true })
   title: string;
 
   @Prop()

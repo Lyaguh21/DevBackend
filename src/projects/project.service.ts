@@ -2,81 +2,29 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
 import { UserProfileService } from 'src/userprofile/userProfile.service';
+import { InjectModel } from '@nestjs/mongoose';
+import { Project } from 'src/schemas/ProjectSchema';
+import { Model, Types } from 'mongoose';
+import { CreateProjectDto } from './dto/request/CreateProject.dto';
 
 @Injectable()
 export class ProjectService {
-  constructor() {}
+  constructor(
+    @InjectModel(Project.name) private projectModel: Model<Project>,
+  ) {}
 
-//   async auth(dto: AuthDto): Promise<LoginResponseDto> {
-//     const nickname = dto.nickname.trim();
+  async create(dto: CreateProjectDto, userId: string): Promise<Project> {
+    const project = new this.projectModel({
+      userId: new Types.ObjectId(userId),
+      title: dto.title,
+      description: dto.discription,
+      links: dto.links,
+      previewImage: dto.previewImage
+    })
 
-//     const user = await this.userService.GetUserByNickname(nickname);
-//     if (!user) {
-//       throw new ConflictException('Такого пользователя не существует');
-//     }
+    return project.save();
+  }
 
-//     const userProfile = await this.userProfileService.GetProfileByID(user._id.toString());
-//     if (!userProfile) {
-//       throw new ConflictException('Такого пользователя не существует');
-//     }
+  async 
 
-//     const passwordExists = await this.hashService.validatePassword(
-//       dto.password.trim(),
-//       user.password,
-//     );
-
-//     if (!passwordExists) {
-//       throw new ConflictException('Неверный логин или пароль');
-//     }
-
-//     var token = await this.authJwtService.createAuthJWT(user.id);
-
-//     return {
-//       id: user.id,
-//       nickname: user.nickname,
-//       role: userProfile.role,
-//       JWTtoken: token.access_token,
-//     };
-//   }
-
-//   public async register(dto: RegisterDto): Promise<LoginResponseDto> {
-//     const email = dto.email.trim();
-//     const nickname = dto.nickname.trim();
-//     const fn = dto.firstName.trim();
-//     const ln = dto.lastName.trim();
-
-//     const emailExists = await this.userService.GetIDByEmail(email);
-//     const nicknameExists = await this.userService.GetIDByNickname(nickname);
-
-//     if (emailExists) {
-//       throw new ConflictException('Такой email уже зарегистрирован');
-//     }
-//     if (nicknameExists) {
-//       throw new ConflictException('Никнейм занят');
-//     }
-
-//     const newUser = await this.userService.create({
-//       nickname: nickname,
-//       email: email,
-//       password: await this.hashService.createHashPassword(dto.password),
-//     });
-
-//     const token = await this.authJwtService.createAuthJWT(
-//       newUser._id.toString(),
-//     );
-
-//     const UserProfile = await this.userProfileService.create({
-//       id: newUser._id.toString(),
-//       firstName: fn,
-//       lastName: ln,
-//       role: dto.role,
-//     });
-
-//     return {
-//       id: newUser._id.toString(),
-//       nickname: newUser.nickname,
-//       role: UserProfile.role,
-//       JWTtoken: token.access_token,
-//     };
-//   }
 }
