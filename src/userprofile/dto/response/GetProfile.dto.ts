@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { Project } from 'src/schemas/ProjectSchema';
 
 export class GetProfileDto {
   @ApiProperty()
@@ -33,4 +34,7 @@ export class GetProfileDto {
   @ApiProperty()
   @IsString()
   avatar?: string;
+
+  @ApiProperty()
+  portfolio: Project[];
 }

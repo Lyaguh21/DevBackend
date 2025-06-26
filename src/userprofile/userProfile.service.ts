@@ -51,7 +51,8 @@ async GetProfileByID(id: string): Promise<GetProfileDto> {
     description: profile.description,
     workplace: profile.workplace,
     role: profile.role,
-    avatar: profile.avatar
+    avatar: profile.avatar,
+    portfolio: profile.portfolio
   };
 }
 
