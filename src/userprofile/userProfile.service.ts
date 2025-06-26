@@ -25,6 +25,7 @@ export class UserProfileService {
       description: '',
       workplace: '',
       portfolio: [],
+      avatar: '',
     });
 
     return profile.save();
@@ -54,8 +55,8 @@ async GetProfileByID(id: string): Promise<GetProfileDto> {
   };
 }
 
-  async UpdateProfile(dto: UpdateUserProfileDto, userId: string) {
-    const profile = this.userProfileModel.findOneAndUpdate(
+  async UpdateProfile(dto: UpdateUserProfileDto, userId: string): Promise<GetProfileDto> {
+    const profile = await this.userProfileModel.findOneAndUpdate(
       { userId: new Types.ObjectId(userId) },
       {
         firstName: dto.firstName,
@@ -63,14 +64,14 @@ async GetProfileByID(id: string): Promise<GetProfileDto> {
         role: dto.role,
         description: dto.description,
         workplace: dto.workplace,
+        avatar: dto.avatar
       },
       { new: true },
     ).exec();
 
-     if (!profile) {
-        throw new Error('Не удалось обновить профиль');
+    if (!profile) {
+      throw new NotFoundException('Не удалось обновить профиль');
     }
-
-    return profile;
+    return await this.GetProfileByID(userId);
   }
 }

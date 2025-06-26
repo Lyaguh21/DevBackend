@@ -1,7 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class UpdateUserProfileDto {
   @ApiProperty()
@@ -23,4 +21,8 @@ export class UpdateUserProfileDto {
   @ApiProperty()
   @IsString()
   role?: string;
+
+  @ApiProperty()
+  @IsString()
+  avatar?: string;
 }
