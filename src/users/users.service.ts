@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schemas/userSchema';
@@ -30,5 +30,13 @@ export class UsersService {
   async GetUserByNickname(nickname: string) {
     const user = await this.userModel.findOne({ nickname }).exec();
     return user;
+  }
+
+  async GetUserByID(id: string) {
+    const user = await this.userModel.findById(id).exec();
+    if (!user) {
+      throw new ConflictException('Пользователь не найден')
+    }
+    return user?.nickname
   }
 }

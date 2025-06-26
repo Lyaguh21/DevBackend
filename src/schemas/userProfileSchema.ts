@@ -29,6 +29,9 @@ export class UserProfile {
 
   @Prop({ type: [ProjectSchema], default: [] })
   portfolio: Project[];
+
+  @Prop()
+  avatar?: string;
   
 }
 

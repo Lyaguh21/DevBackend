@@ -6,11 +6,14 @@ import { UserProfile } from 'src/schemas/userProfileSchema';
 import { User } from 'src/schemas/userSchema';
 import { UpdateUserProfileDto } from './dto/request/UpdateUserProfile.dto';
 import { CreateUserProfileDto } from './dto/request/CreateProfile.dto';
+import { UsersService } from 'src/users/users.service';
+import { GetProfileDto } from './dto/response/GetProfile.dto';
 
 @Injectable()
 export class UserProfileService {
   constructor(
     @InjectModel(UserProfile.name) private userProfileModel: Model<UserProfile>,
+    private userService: UsersService,
   ) {}
 
   async create(dto: CreateUserProfileDto): Promise<UserProfile> {
@@ -29,7 +32,7 @@ export class UserProfileService {
 
 
 
-async GetProfileByID(id: string): Promise<UserProfile> {
+async GetProfileByID(id: string): Promise<GetProfileDto> {
   const profile = await this.userProfileModel
     .findOne({ userId: new Types.ObjectId(id) })
     .lean()
@@ -37,7 +40,18 @@ async GetProfileByID(id: string): Promise<UserProfile> {
   if (!profile) {
     throw new NotFoundException('Профиль не найден');
   }
-  return profile;
+
+  const nickname = await this.userService.GetUserByID(id)
+  return {
+    userId: id,
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    nickname: nickname,
+    description: profile.description,
+    workplace: profile.workplace,
+    role: profile.role,
+    avatar: profile.avatar
+  };
 }
 
   async UpdateProfile(dto: UpdateUserProfileDto, userId: string) {
