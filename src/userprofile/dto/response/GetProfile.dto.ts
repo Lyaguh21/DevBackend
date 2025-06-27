@@ -1,40 +1,31 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { Project } from 'src/schemas/ProjectSchema';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { GetProjectDto } from 'src/projects/dto/response/GetProject.dto';
 
 export class GetProfileDto {
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ type: String, description: 'ID пользователя' })
   userId: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ description: 'Имя' })
   firstName: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ description: 'Фамилия' })
   lastName: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ description: 'Никнейм' })
   nickname: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiPropertyOptional({ description: 'Описание профиля' })
   description?: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiPropertyOptional({ description: 'Место работы' })
   workplace?: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ description: 'Роль' })
   role: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiPropertyOptional({ description: 'Аватар' })
   avatar?: string;
 
-  @ApiProperty()
-  portfolio: Project[];
+  @ApiProperty({ type: [GetProfileDto], description: 'Портфолио проектов' })
+  portfolio: GetProjectDto[];
 }

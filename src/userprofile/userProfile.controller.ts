@@ -6,7 +6,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer } from 'multer';
 
 @ApiTags('users')
-@Controller('profiles')
+@Controller('users')
 export class UserProfileController {
   constructor(private UserProfileService: UserProfileService) {}
 

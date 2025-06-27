@@ -5,11 +5,13 @@ import { Model, Types } from 'mongoose';
 import { CreateProjectDto } from './dto/request/CreateProject.dto';
 import { UpdateProjectDto } from './dto/request/UpdateProject.dto';
 import { GetProjectDto } from './dto/response/GetProject.dto';
+import { UserProfileService } from 'src/userprofile/userProfile.service';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
+    private userProfileService: UserProfileService,
   ) {}
 
   async create(dto: CreateProjectDto, userId: string): Promise<GetProjectDto> {
@@ -21,19 +23,20 @@ export class ProjectService {
       previewImage: dto.previewImage,
     });
 
-    project.save();
+    await project.save();
+
+    await this.userProfileService.addNewProject(userId, project.id.toString())
 
     return await this.GetProjectById(project.id.toString())
   }
 
   async GetProjectById(id: string): Promise<GetProjectDto> {
-    const project = await this.projectModel.findById(id).lean().exec();
+    const project = await this.projectModel.findById(new Types.ObjectId(id)).lean().exec();
     if (!project) {
       throw new NotFoundException('Проект не найден');
     }
     return {
       id: project._id.toString(),
-      userId: project.userId,
       title: project.title,
       description: project.description,
       links: project.links,

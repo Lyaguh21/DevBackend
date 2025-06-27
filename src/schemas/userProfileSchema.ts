@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Project, ProjectSchema } from './ProjectSchema';
 
 export type UserDocument = UserProfile & Document;
 
@@ -27,12 +26,11 @@ export class UserProfile {
   @Prop()
   workplace?: string;
 
-  @Prop({ type: [ProjectSchema], default: [] })
-  portfolio: Project[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Project' }], default: [] })
+  portfolio: Types.ObjectId[];
 
   @Prop()
   avatar?: string;
-  
 }
 
 export const UserProfileSchema = SchemaFactory.createForClass(UserProfile);
