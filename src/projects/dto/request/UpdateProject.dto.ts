@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import {  IsString } from 'class-validator';
 
-export class CreateProjectDto {
+export class UpdateProjectDto {
   @ApiProperty()
   @IsString()
-  title: string;
+  title?: string;
 
   @ApiProperty()
   @IsString()
@@ -12,7 +12,7 @@ export class CreateProjectDto {
 
   @ApiProperty()
   @IsString()
-  links: string[];
+  links?: string[];
 
   @ApiProperty()
   @IsString()

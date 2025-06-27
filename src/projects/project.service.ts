@@ -1,11 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { UsersService } from 'src/users/users.service';
-import { UserProfileService } from 'src/userprofile/userProfile.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Project } from 'src/schemas/ProjectSchema';
 import { Model, Types } from 'mongoose';
 import { CreateProjectDto } from './dto/request/CreateProject.dto';
+import { UpdateProjectDto } from './dto/request/UpdateProject.dto';
+import { GetProjectDto } from './dto/response/GetProject.dto';
 
 @Injectable()
 export class ProjectService {
@@ -13,18 +12,59 @@ export class ProjectService {
     @InjectModel(Project.name) private projectModel: Model<Project>,
   ) {}
 
-  async create(dto: CreateProjectDto, userId: string): Promise<Project> {
+  async create(dto: CreateProjectDto, userId: string): Promise<GetProjectDto> {
     const project = new this.projectModel({
       userId: new Types.ObjectId(userId),
       title: dto.title,
-      description: dto.discription,
+      description: dto.description,
       links: dto.links,
-      previewImage: dto.previewImage
-    })
+      previewImage: dto.previewImage,
+    });
 
-    return project.save();
+    project.save();
+
+    return await this.GetProjectById(project.id.toString())
   }
 
-  async 
+  async GetProjectById(id: string): Promise<GetProjectDto> {
+    const project = await this.projectModel.findById(id).lean().exec();
+    if (!project) {
+      throw new NotFoundException('Проект не найден');
+    }
+    return {
+      id: project._id.toString(),
+      userId: project.userId,
+      title: project.title,
+      description: project.description,
+      links: project.links,
+      previewImage: project.previewImage,
+    };
+  }
 
+  async update(
+    dto: UpdateProjectDto,
+    projectId: string,
+  ): Promise<GetProjectDto> {
+    const newproject = await this.projectModel
+      .findOneAndUpdate(
+        { id: new Types.ObjectId(projectId) },
+        {
+          title: dto.title,
+          description: dto.description,
+          links: dto.links,
+          previewImage: dto.previewImage,
+        },
+        { new: true },
+      )
+      .exec();
+    if (!newproject) {
+      throw new NotFoundException('Не удалось обновить профиль');
+    }
+    return await this.GetProjectById(projectId);
+  }
+
+
+  async deleteProject(id: string) {
+    return this.projectModel.findByIdAndDelete(id)
+  }
 }
