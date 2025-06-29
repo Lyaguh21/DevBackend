@@ -1,18 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
+import { Types } from 'mongoose';
 
-export class CreateProjectDto {
+export class GetPostDto {
+  @ApiProperty()
+  @IsString()
+  id: string;
+
   @ApiProperty()
   @IsString()
   title: string;
 
   @ApiProperty()
   @IsString()
-  description?: string;
+  content: string;
 
   @ApiProperty()
   @IsString()
-  links: string[];
+  author: string;
+
+  @ApiProperty()
+  @IsString()
+  type: string;
+
+  @ApiProperty()
+  @IsString()
+  direction: string;
+
+  @ApiProperty()
+  @IsNumber()
+  likes: Number;
+
+  @ApiProperty()
+  likesBy: Types.ObjectId[];
 
   @ApiProperty()
   @IsString()

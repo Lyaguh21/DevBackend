@@ -1,26 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
 
-export class CreatePostDto {
+export class UpdatePostDto {
   @ApiProperty()
   @IsString()
-  title: string;
+  title?: string;
 
   @ApiProperty()
   @IsString()
-  direction: string;
+  content?: string;
 
   @ApiProperty()
   @IsString()
-  content: string;
+  type?: string;
 
   @ApiProperty()
   @IsString()
-  author: string;
-
-  @ApiProperty()
-  @IsString()
-  type: string;
+  direction?: string;
 
   @ApiProperty()
   @IsString()

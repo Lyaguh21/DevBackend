@@ -26,8 +26,8 @@ export class Posts {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   likedBy: Types.ObjectId[];
 
-  @Prop()
-  previewImage?: string;
+  @Prop({default: ""})
+  previewImage: string;
 }
 
 export const PostsSchema = SchemaFactory.createForClass(Posts);
