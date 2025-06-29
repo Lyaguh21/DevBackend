@@ -37,7 +37,7 @@ export class UserProfileService {
         {
           userId: new Types.ObjectId(userId),
         },
-        { portfolio: new Types.ObjectId(projectId) },
+        { $push: { portfolio: new Types.ObjectId(projectId) } },
       )
       .exec();
   }
