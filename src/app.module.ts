@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserProfileModule } from './userprofile/userProfile.module';
 import { ProjectModule } from './projects/project.module';
 import { ImageModule } from './base64/image.module';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ImageModule } from './base64/image.module';
     UserProfileModule,
     ProjectModule,
     ImageModule,
+    PostsModule
   ],
   controllers: [],
   providers: [],
