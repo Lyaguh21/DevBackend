@@ -25,13 +25,16 @@ export class ProjectService {
 
     await project.save();
 
-    await this.userProfileService.addNewProject(userId, project.id.toString())
+    await this.userProfileService.addNewProject(userId, project.id.toString());
 
-    return await this.GetProjectById(project.id.toString())
+    return await this.GetProjectById(project.id.toString());
   }
 
   async GetProjectById(id: string): Promise<GetProjectDto> {
-    const project = await this.projectModel.findById(new Types.ObjectId(id)).lean().exec();
+    const project = await this.projectModel
+      .findById(new Types.ObjectId(id))
+      .lean()
+      .exec();
     if (!project) {
       throw new NotFoundException('Проект не найден');
     }
@@ -66,8 +69,13 @@ export class ProjectService {
     return await this.GetProjectById(projectId);
   }
 
-
   async deleteProject(id: string) {
-    return this.projectModel.findByIdAndDelete(id)
+    const delproject = await this.projectModel.findByIdAndDelete(id).exec();
+    if (delproject) {
+      throw new NotFoundException(
+        `Профиль не найден`,
+      );
+    }
+    return delproject;
   }
 }

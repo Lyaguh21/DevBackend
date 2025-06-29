@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/request/CreateProject.dto';
@@ -32,4 +32,11 @@ export class ProjectController {
   ): Promise<GetProjectDto> {
     return this.projectService.update(body, projectId);
   }
+
+
+  @Delete(':projectId')
+  async deleteProject(
+    @Param('projectId') projectId: string){
+      return this.projectService.deleteProject(projectId)
+    }
 }
