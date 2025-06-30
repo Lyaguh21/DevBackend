@@ -5,10 +5,8 @@ interface UserPayload {
   username?: string;
   role?: string;
 }
-
-export const User = createParamDecorator(
-  (data: keyof UserPayload | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest<{ user: UserPayload }>();
-    return data ? request.user?.[data] : request.user;
-  },
-);
+export const User = createParamDecorator((data, ctx) => {
+  const request = ctx.switchToHttp().getRequest();
+  console.log('Request user:', request.user);
+  return data ? request.user?.[data] : request.user;
+});

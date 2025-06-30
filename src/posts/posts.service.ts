@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Posts } from 'src/schemas/postsSchema';
@@ -24,23 +24,27 @@ export class PostsService {
   }
 
   async getPostsByAuthor(authorId: string): Promise<GetPostDto[]> {
-    const posts = await this.postsModel
-      .find({ author: new Types.ObjectId(authorId) })
-      .lean()
-      .exec();
-
-    return posts.map((post) => ({
-      id: post._id.toString(),
-      title: post.title,
-      content: post.content,
-      author: post.author.toString(),
-      type: post.type,
-      direction: post.direction,
-      likes: post.likes,
-      likesBy: post.likedBy,
-      previewImage: post.previewImage,
-    }));
+  if (!authorId || !Types.ObjectId.isValid(authorId)) {
+    throw new BadRequestException('Invalid author ID format');
   }
+
+  const posts = await this.postsModel
+    .find({ author: new Types.ObjectId(authorId) })
+    .lean()
+    .exec();
+
+  return posts.map((post) => ({
+    id: post._id.toString(),
+    title: post.title,
+    content: post.content,
+    author: post.author.toString(),
+    type: post.type,
+    direction: post.direction,
+    likes: post.likes,
+    likesBy: post.likedBy,
+    previewImage: post.previewImage,
+  }));
+}
 
   async GetPostByID(id: string): Promise<GetPostDto> {
     const post = await this.postsModel
@@ -85,13 +89,16 @@ export class PostsService {
     }
     return await this.GetPostByID(id);
   }
-  async PutLike(id: string): Promise<GetPostDto> {
-    const countlikes = Number((await this.GetPostByID(id)).likes) + 1;
+  async PutLike(id: string, userId: string): Promise<GetPostDto> {
+    const newpost = await this.GetPostByID(id) 
+    const countlikes = Number(newpost.likes) + 1;
+    const likedBy = newpost.likesBy.push(new Types.ObjectId(userId)) 
 
     const post = this.postsModel
       .findByIdAndUpdate(
         { id: new Types.ObjectId(id) },
-        { likes: countlikes },
+        { likes: countlikes, likedBy: likedBy
+         },
         { new: true },
       )
       .exec();
