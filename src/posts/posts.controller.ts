@@ -60,4 +60,10 @@ export class PostsController {
   async UpdatePost(@Param("id") id: string, @Body() dto: UpdatePostDto): Promise<GetPostDto>{
     return this.postsService.UpdatePost(id, dto)
   }
+
+  @Get("id")
+  @UseGuards(JwtAuthGuard)
+  async GetPostById(@Param("id") id: string): Promise<GetPostDto>{
+    return this.postsService.GetPostByID(id)
+  }
 }
