@@ -70,12 +70,12 @@ export class ProjectService {
   }
 
   async deleteProject(id: string) {
-    const delproject = await this.projectModel.findByIdAndDelete(id).exec();
-    if (delproject) {
+    const delproject = await this.projectModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
+    if (!delproject) {
       throw new NotFoundException(
         `Профиль не найден`,
       );
     }
-    return delproject;
+    return { message: 'Проект успешно удален' };
   }
 }
