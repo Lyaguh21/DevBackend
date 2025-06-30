@@ -17,8 +17,8 @@ export class UserProfileController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  async updateUserProfile(@Param('id') id: string, @Body()dto: UpdateUserProfileDto) {
-    return this.UserProfileService.UpdateProfile(dto, id);
+  async updateUserProfile(@Param('id') id: string, @Body() dto: UpdateUserProfileDto) {
+    return this.UserProfileService.UpdateProfile(dto, id.toString());
   }
 }
 

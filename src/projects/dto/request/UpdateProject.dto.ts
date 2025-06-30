@@ -11,7 +11,7 @@ export class UpdateProjectDto {
   description?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsString({ each: true })
   links?: string[];
 
   @ApiProperty()
