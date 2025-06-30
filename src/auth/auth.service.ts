@@ -39,11 +39,8 @@ export class AuthService {
       throw new ConflictException('Неверный логин или пароль');
     }
 
-    const { accessToken, refreshToken } = await this.authJwtService.createAuthTokens(user.id);
-    await this.authJwtService.setAuthCookies(res, {
-      accessToken: accessToken.access_token,
-      refreshToken: refreshToken.refresh_token,
-    });
+    const token = await this.authJwtService.createAuthJWT(user.id);
+    await this.authJwtService.setAuthCookie(res, token.access_token);
 
     return {
       id: user.id,
@@ -74,7 +71,7 @@ export class AuthService {
       password: await this.hashService.createHashPassword(dto.password),
     });
 
-    const { accessToken, refreshToken } = await this.authJwtService.createAuthTokens(newUser._id.toString());
+    const token = await this.authJwtService.createAuthJWT(newUser._id.toString());
     const userProfile = await this.userProfileService.create({
       id: newUser._id.toString(),
       firstName: firstName,
@@ -82,10 +79,7 @@ export class AuthService {
       role: dto.role,
     });
 
-    await this.authJwtService.setAuthCookies(res, {
-      accessToken: accessToken.access_token,
-      refreshToken: refreshToken.refresh_token,
-    });
+    await this.authJwtService.setAuthCookie(res, token.access_token);
 
     return {
       id: newUser._id.toString(),
@@ -95,7 +89,7 @@ export class AuthService {
   }
 
   async logout(res: Response): Promise<{ message: string }> {
-    await this.authJwtService.clearAuthCookies(res);
+    await this.authJwtService.clearAuthCookie(res);
     return { message: 'Вы успешно вышли из системы' };
   }
 
