@@ -6,12 +6,14 @@ import {
   Get,
   Param,
   Delete,
+  Patch,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/requests/CreatePost.dto';
 import { GetPostDto } from './dto/response/GetPost.dto';
 import { User } from 'src/users/user.decorator';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdatePostDto } from './dto/requests/UpdatePost.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -51,5 +53,11 @@ export class PostsController {
   @UseGuards(JwtAuthGuard)
   async DeletePost(@Param("id") id: string){
     return this.postsService.DeletePost(id)
+  }
+
+  @Patch(":id")
+  @UseGuards(JwtAuthGuard)
+  async UpdatePost(@Param("id") id: string, @Body() dto: UpdatePostDto): Promise<GetPostDto>{
+    return this.postsService.UpdatePost(id, dto)
   }
 }
