@@ -31,7 +31,7 @@ export class PostsController {
 
   @Post(":id/like")
   @UseGuards(JwtAuthGuard)
-  async LikePost(@Param() id: string, @User() user: { sub: string }): Promise<GetPostDto> {
+  async LikePost(@Param('id') id: string, @User() user: { sub: string }): Promise<GetPostDto> {
     return this.postsService.PutLike(id, user.sub)
   }
 }

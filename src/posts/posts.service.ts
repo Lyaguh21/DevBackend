@@ -5,7 +5,6 @@ import { Posts } from 'src/schemas/postsSchema';
 import { CreatePostDto } from './dto/requests/CreatePost.dto';
 import { GetPostDto } from './dto/response/GetPost.dto';
 import { UpdatePostDto } from './dto/requests/UpdatePost.dto';
-import { count } from 'console';
 
 @Injectable()
 export class PostsService {
