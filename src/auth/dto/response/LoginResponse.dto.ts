@@ -13,8 +13,4 @@ export class LoginResponseDto {
   @ApiProperty()
   @IsString()
   role: string;
-
-  @ApiProperty()
-  @IsString()
-  JWTtoken: string;
 }

@@ -53,7 +53,7 @@ export class ProjectService {
   ): Promise<GetProjectDto> {
     const newproject = await this.projectModel
       .findByIdAndUpdate(
-        new Types.ObjectId(projectId) ,
+        new Types.ObjectId(projectId),
         {
           title: dto.title,
           description: dto.description,

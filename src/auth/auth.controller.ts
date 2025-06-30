@@ -1,22 +1,31 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dto/request/Register.dto';
 import { AuthDto } from './dto/request/Auth.dto';
-import { LoginResponseDto } from './dto/response/LoginResponse.dto';
+import { RegisterDto } from './dto/request/Register.dto';
+import { Response } from 'express';
 
-@ApiTags('Auth')
-@Controller()
+@Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
-
-  @Post('register')
-  async register(@Body() body: RegisterDto): Promise<LoginResponseDto> {
-    return this.authService.register(body);
-  }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async auth(@Body() body: AuthDto): Promise<LoginResponseDto> {
-    return this.authService.auth(body);
+  async auth(
+    @Body() body: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.auth(body, res);
+  }
+
+  @Post('register')
+  async register(
+    @Body() body: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.register(body, res);
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    return this.authService.logout(res);
   }
 }
