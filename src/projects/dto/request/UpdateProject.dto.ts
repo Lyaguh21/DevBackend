@@ -1,20 +1,30 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {  IsString } from 'class-validator';
+import { IsString, IsOptional, ValidateNested, IsArray } from 'class-validator';
 
 export class UpdateProjectDto {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
+  @IsOptional()
   title?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
+  @IsOptional()
   description?: string;
 
-  @ApiProperty()
-  @IsString({ each: true })
-  links?: string[];
+  @ApiProperty({ 
+    required: false,
+    type: [String],
+    nullable: true,
+    example: ["http://example.com", null, null] 
+  })
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  links?: (string | null)[];
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsString()
+  @IsOptional()
   previewImage?: string;
 }
