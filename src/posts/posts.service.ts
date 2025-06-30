@@ -11,21 +11,35 @@ import { count } from 'console';
 export class PostsService {
   constructor(@InjectModel(Posts.name) private postsModel: Model<Posts>) {}
 
-  async create(dto: CreatePostDto): Promise<GetPostDto> {
+  async create(dto: CreatePostDto, userId: string): Promise<GetPostDto> {
     const newpost = new this.postsModel({
-      title: dto.title,
-      direction: dto.direction,
-      content: dto.content,
-      author: dto.author,
-      type: dto.type,
-      previewImage: dto.previewImage,
+      ...dto,
+      author: new Types.ObjectId(userId),
       likes: 0,
       likedBy: [],
     });
 
     await newpost.save();
+    return this.GetPostByID(newpost._id.toString());
+  }
 
-    return await this.GetPostByID(newpost.id.toString());
+  async getPostsByAuthor(authorId: string): Promise<GetPostDto[]> {
+    const posts = await this.postsModel
+      .find({ author: new Types.ObjectId(authorId) })
+      .lean()
+      .exec();
+
+    return posts.map((post) => ({
+      id: post._id.toString(),
+      title: post.title,
+      content: post.content,
+      author: post.author.toString(),
+      type: post.type,
+      direction: post.direction,
+      likes: post.likes,
+      likesBy: post.likedBy,
+      previewImage: post.previewImage,
+    }));
   }
 
   async GetPostByID(id: string): Promise<GetPostDto> {
@@ -82,11 +96,11 @@ export class PostsService {
       )
       .exec();
 
-      if (!post) {
-        throw new NotFoundException("Не удалось поставить лайк")
-      }
+    if (!post) {
+      throw new NotFoundException('Не удалось поставить лайк');
+    }
 
-      return await this.GetPostByID(id)
+    return await this.GetPostByID(id);
   }
 
   //   async updatePost(dto)

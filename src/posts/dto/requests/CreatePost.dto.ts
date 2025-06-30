@@ -16,10 +16,6 @@ export class CreatePostDto {
 
   @ApiProperty()
   @IsString()
-  author: string;
-
-  @ApiProperty()
-  @IsString()
   type: string;
 
   @ApiProperty()
