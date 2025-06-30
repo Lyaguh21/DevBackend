@@ -10,16 +10,14 @@ export class CreateProjectDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ 
-      required: false,
-      type: [String],
-      nullable: true,
-      example: ["http://example.com", null, null] 
-    })
-    @IsArray()
-    @IsOptional()
-    @ValidateNested({ each: true })
-    links?: (string | null)[];
+  @ApiProperty({
+    required: false,
+    type: [String],
+    nullable: true,
+    example: ['http://example.com', null, null],
+  })
+  @IsOptional()
+  links?: (string | null)[];
 
   @ApiProperty()
   @IsString()

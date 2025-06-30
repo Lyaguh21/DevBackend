@@ -12,15 +12,13 @@ export class UpdateProjectDto {
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     required: false,
     type: [String],
     nullable: true,
-    example: ["http://example.com", null, null] 
+    example: ['http://example.com', null, null],
   })
-  @IsArray()
   @IsOptional()
-  @ValidateNested({ each: true })
   links?: (string | null)[];
 
   @ApiProperty({ required: false })
