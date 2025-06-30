@@ -14,7 +14,7 @@ export class Posts {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   author: Types.ObjectId;
 
-  @Prop({ required: true, enum: ['Контент', 'Событие', 'Вакансия'] })
+  @Prop({ required: true, enum: ['Content', 'Event', 'Vacancy'] })
   type: string;
 
   @Prop({ required: true })
@@ -26,7 +26,7 @@ export class Posts {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   likedBy: Types.ObjectId[];
 
-  @Prop({default: ""})
+  @Prop({ default: '' })
   previewImage: string;
 }
 
