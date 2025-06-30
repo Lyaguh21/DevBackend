@@ -11,7 +11,6 @@ export class UserProfileController {
   constructor(private UserProfileService: UserProfileService) {}
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
   async getUserProfileById(@Param('id') id: string) {
     return this.UserProfileService.GetProfileByID(id);
   }
