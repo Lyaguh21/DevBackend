@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 export type ProjectDocument = Posts & Document;
 
@@ -21,9 +21,13 @@ export class Posts {
   direction: string;
 
   @Prop({ required: true, default: 0 })
-  likes: Number;
+  likes: number;
 
-  @Prop({ type: Types.ObjectId, ref: 'User' })
+  @Prop({
+    type: [SchemaTypes.ObjectId],
+    ref: 'User',
+    default: [],
+  })
   likedBy: Types.ObjectId[];
 
   @Prop({ default: '' })

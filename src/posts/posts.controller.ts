@@ -25,7 +25,7 @@ export class PostsController {
     return this.postsService.create(dto, user.sub);
   }
 
-  @Get()
+  @Get("user")
   @UseGuards(JwtAuthGuard)
   async getUserPosts(@User() user: { sub: string }): Promise<GetPostDto[]> {
     return this.postsService.getPostsByAuthor(user.sub);
@@ -46,7 +46,7 @@ export class PostsController {
     @Param('id') id: string,
     @User() user: { sub: string },
   ): Promise<GetPostDto> {
-    return this.postsService.PutLike(id, user.sub);
+    return this.postsService.RemoveLike(id, user.sub);
   }
 
   @Delete(':id')
@@ -61,9 +61,15 @@ export class PostsController {
     return this.postsService.UpdatePost(id, dto)
   }
 
-  @Get("id")
+  @Get(":id")
   @UseGuards(JwtAuthGuard)
   async GetPostById(@Param("id") id: string): Promise<GetPostDto>{
     return this.postsService.GetPostByID(id)
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async GetAllPosts(): Promise<GetPostDto[]>{
+    return this.postsService.GetAllPosts()
   }
 }

@@ -93,19 +93,18 @@ export class PostsService {
     return await this.GetPostByID(id);
   }
   async PutLike(id: string, userId: string): Promise<GetPostDto> {
-    const newpost = await this.GetPostByID(id);
-    const countlikes = Number(newpost.likes) + 1;
-    const likedBy = newpost.likesBy.push(new Types.ObjectId(userId));
-
-    const post = this.postsModel
+    const updatedPost = await this.postsModel
       .findByIdAndUpdate(
-        { id: new Types.ObjectId(id) },
-        { likes: countlikes, likedBy: likedBy },
+        new Types.ObjectId(id),
+        {
+          $inc: { likes: 1 },
+          $push: { likedBy: new Types.ObjectId(userId) },
+        },
         { new: true },
       )
       .exec();
 
-    if (!post) {
+    if (!updatedPost) {
       throw new NotFoundException('Не удалось поставить лайк');
     }
 
@@ -113,25 +112,18 @@ export class PostsService {
   }
 
   async RemoveLike(id: string, userId: string): Promise<GetPostDto> {
-    const newpost = await this.GetPostByID(id);
-
-    const countlikes = Math.max(Number(newpost.likes) - 1, 0);
-    const likedBy = newpost.likesBy.filter(
-      (likeId) => likeId.toString() !== userId,
-    );
-
-    const post = await this.postsModel
+    const updatedPost = await this.postsModel
       .findByIdAndUpdate(
         new Types.ObjectId(id),
         {
-          likes: countlikes,
-          likesBy: likedBy,
+          $inc: { likes: -1 },
+          $pull: { likedBy: new Types.ObjectId(userId) },
         },
         { new: true },
       )
       .exec();
 
-    if (!post) {
+    if (!updatedPost) {
       throw new NotFoundException('Не удалось снять лайк');
     }
 
@@ -139,12 +131,28 @@ export class PostsService {
   }
 
   async DeletePost(id: string) {
-    const delpost = await this.postsModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
+    const delpost = await this.postsModel
+      .findByIdAndDelete(new Types.ObjectId(id))
+      .exec();
     if (!delpost) {
-          throw new NotFoundException(
-            `Пост не найден`,
-          );
-        }
-        return { message: 'Пост успешно удален' };
+      throw new NotFoundException(`Пост не найден`);
+    }
+    return { message: 'Пост успешно удален' };
+  }
+
+  async GetAllPosts(): Promise<GetPostDto[]> {
+    const posts = await this.postsModel.find().lean().exec();
+
+    return posts.map((post) => ({
+      id: post._id.toString(),
+      title: post.title,
+      content: post.content,
+      author: post.author.toString(),
+      type: post.type,
+      direction: post.direction,
+      likes: post.likes,
+      likesBy: post.likedBy,
+      previewImage: post.previewImage,
+    }));
   }
 }
