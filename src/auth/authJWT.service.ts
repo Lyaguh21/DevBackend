@@ -17,7 +17,7 @@ export class AuthJWTService {
       throw new BadRequestException('Invalid user ID format');
     }
 
-    const payload = { 
+    const payload = {
       sub: userId,
     };
 
@@ -26,7 +26,7 @@ export class AuthJWTService {
       expiresIn: this.configService.get<string>('JWT_EXPIRES_IN', '1h'),
     });
 
-    return { 
+    return {
       access_token: token,
       token_type: 'Bearer',
       expires_in: this.configService.get<string>('JWT_EXPIRES_IN', '1h'),
@@ -38,15 +38,17 @@ export class AuthJWTService {
       throw new BadRequestException('Token is required');
     }
 
-    const expiresIn = this.configService.get<number>('JWT_COOKIE_EXPIRES_IN', 86400);
-    
+    const expiresIn = this.configService.get<number>(
+      'JWT_COOKIE_EXPIRES_IN',
+      86400,
+    );
+
     res.cookie('jwt', token, {
-      httpOnly: true,
-      secure: this.configService.get('NODE_ENV') === 'production',
-      sameSite: 'strict',
-      maxAge: expiresIn * 1000,
-      domain: this.configService.get('DOMAIN', 'localhost'),
-      path: '/',
+      httpOnly: true, // Защита от XSS
+      secure: true, // Только HTTPS
+      sameSite: 'none', // Разрешить кросс-сайтовые запросы
+      partitioned: true, // Новый атрибут для кросс-сайтовых кук
+      maxAge: 86400000, // Срок жизни (24 часа)
     });
   }
 
