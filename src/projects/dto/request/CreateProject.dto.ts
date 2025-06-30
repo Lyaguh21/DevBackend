@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class CreateProjectDto {
   @ApiProperty()
@@ -10,9 +10,16 @@ export class CreateProjectDto {
   @IsString()
   description?: string;
 
-  @ApiProperty()
-  @IsString({ each: true })
-  links: string[];
+  @ApiProperty({ 
+      required: false,
+      type: [String],
+      nullable: true,
+      example: ["http://example.com", null, null] 
+    })
+    @IsArray()
+    @IsOptional()
+    @ValidateNested({ each: true })
+    links?: (string | null)[];
 
   @ApiProperty()
   @IsString()
