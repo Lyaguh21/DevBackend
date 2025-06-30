@@ -4,7 +4,6 @@ import {
   Body,
   UseGuards,
   Get,
-  BadRequestException,
   Param,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';

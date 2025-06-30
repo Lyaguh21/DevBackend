@@ -5,7 +5,7 @@ import { CreateProjectDto } from './dto/request/CreateProject.dto';
 import { GetProjectDto } from './dto/response/GetProject.dto';
 import { UpdateProjectDto } from './dto/request/UpdateProject.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { User } from 'src/users/user.decorator';
+
 
 @ApiTags('Projects')
 @Controller('users/:id/portfolio')
@@ -16,9 +16,9 @@ export class ProjectController {
   @UseGuards(JwtAuthGuard)
   async create(
     @Body() body: CreateProjectDto,
-    @User() user: { sub: string }
+    @Param("id") id: string,
   ): Promise<GetProjectDto> {
-    return this.projectService.create(body, user.sub);
+    return this.projectService.create(body, id);
   }
 
   @Get(':projectId')
@@ -30,6 +30,7 @@ export class ProjectController {
   }
 
   @Patch(':projectId')
+  @UseGuards(JwtAuthGuard)
   async updateProject(
     @Param('projectId') projectId: string,
     @Body() body: UpdateProjectDto,
