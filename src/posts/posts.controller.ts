@@ -5,6 +5,7 @@ import {
   UseGuards,
   Get,
   Param,
+  Delete,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/requests/CreatePost.dto';
@@ -28,9 +29,27 @@ export class PostsController {
     return this.postsService.getPostsByAuthor(user.sub);
   }
 
-  @Post(":id/like")
+  @Post(':id/like')
   @UseGuards(JwtAuthGuard)
-  async LikePost(@Param('id') id: string, @User() user: { sub: string }): Promise<GetPostDto> {
-    return this.postsService.PutLike(id, user.sub)
+  async LikePost(
+    @Param('id') id: string,
+    @User() user: { sub: string },
+  ): Promise<GetPostDto> {
+    return this.postsService.PutLike(id, user.sub);
+  }
+
+  @Delete(':id/like')
+  @UseGuards(JwtAuthGuard)
+  async UnLikePost(
+    @Param('id') id: string,
+    @User() user: { sub: string },
+  ): Promise<GetPostDto> {
+    return this.postsService.PutLike(id, user.sub);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async DeletePost(@Param("id") id: string){
+    return this.postsService.DeletePost(id)
   }
 }

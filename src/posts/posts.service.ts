@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Posts } from 'src/schemas/postsSchema';
@@ -23,27 +27,27 @@ export class PostsService {
   }
 
   async getPostsByAuthor(authorId: string): Promise<GetPostDto[]> {
-  if (!authorId || !Types.ObjectId.isValid(authorId)) {
-    throw new BadRequestException('Invalid author ID format');
+    if (!authorId || !Types.ObjectId.isValid(authorId)) {
+      throw new BadRequestException('Invalid author ID format');
+    }
+
+    const posts = await this.postsModel
+      .find({ author: new Types.ObjectId(authorId) })
+      .lean()
+      .exec();
+
+    return posts.map((post) => ({
+      id: post._id.toString(),
+      title: post.title,
+      content: post.content,
+      author: post.author.toString(),
+      type: post.type,
+      direction: post.direction,
+      likes: post.likes,
+      likesBy: post.likedBy,
+      previewImage: post.previewImage,
+    }));
   }
-
-  const posts = await this.postsModel
-    .find({ author: new Types.ObjectId(authorId) })
-    .lean()
-    .exec();
-
-  return posts.map((post) => ({
-    id: post._id.toString(),
-    title: post.title,
-    content: post.content,
-    author: post.author.toString(),
-    type: post.type,
-    direction: post.direction,
-    likes: post.likes,
-    likesBy: post.likedBy,
-    previewImage: post.previewImage,
-  }));
-}
 
   async GetPostByID(id: string): Promise<GetPostDto> {
     const post = await this.postsModel
@@ -89,15 +93,14 @@ export class PostsService {
     return await this.GetPostByID(id);
   }
   async PutLike(id: string, userId: string): Promise<GetPostDto> {
-    const newpost = await this.GetPostByID(id) 
+    const newpost = await this.GetPostByID(id);
     const countlikes = Number(newpost.likes) + 1;
-    const likedBy = newpost.likesBy.push(new Types.ObjectId(userId)) 
+    const likedBy = newpost.likesBy.push(new Types.ObjectId(userId));
 
     const post = this.postsModel
       .findByIdAndUpdate(
         { id: new Types.ObjectId(id) },
-        { likes: countlikes, likedBy: likedBy
-         },
+        { likes: countlikes, likedBy: likedBy },
         { new: true },
       )
       .exec();
@@ -109,5 +112,39 @@ export class PostsService {
     return await this.GetPostByID(id);
   }
 
-  //   async updatePost(dto)
+  async RemoveLike(id: string, userId: string): Promise<GetPostDto> {
+    const newpost = await this.GetPostByID(id);
+
+    const countlikes = Math.max(Number(newpost.likes) - 1, 0);
+    const likedBy = newpost.likesBy.filter(
+      (likeId) => likeId.toString() !== userId,
+    );
+
+    const post = await this.postsModel
+      .findByIdAndUpdate(
+        new Types.ObjectId(id),
+        {
+          likes: countlikes,
+          likesBy: likedBy,
+        },
+        { new: true },
+      )
+      .exec();
+
+    if (!post) {
+      throw new NotFoundException('Не удалось снять лайк');
+    }
+
+    return await this.GetPostByID(id);
+  }
+
+  async DeletePost(id: string) {
+    const delpost = await this.postsModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
+    if (!delpost) {
+          throw new NotFoundException(
+            `Пост не найден`,
+          );
+        }
+        return { message: 'Пост успешно удален' };
+  }
 }

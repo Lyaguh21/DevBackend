@@ -17,7 +17,7 @@ export class Project {
   @Prop()
   description?: string;
 
-  @Prop({ type: [String], default: [] })
+  @Prop()
   links: string[];
 
   @Prop()
