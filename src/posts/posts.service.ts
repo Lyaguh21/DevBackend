@@ -73,9 +73,7 @@ export class PostsService {
   async UpdatePost(id: string, dto: UpdatePostDto): Promise<GetPostDto> {
     const post = await this.postsModel
       .findByIdAndUpdate(
-        {
-          id: new Types.ObjectId(id),
-        },
+        id, 
         {
           title: dto.title,
           content: dto.content,
@@ -90,6 +88,7 @@ export class PostsService {
     if (!post) {
       throw new NotFoundException('Не удалось обновить пост');
     }
+
     return await this.GetPostByID(id);
   }
   async PutLike(id: string, userId: string): Promise<GetPostDto> {
