@@ -128,4 +128,4 @@ npm run start:dev
 
 ##### Документация к API(Swagger)
 
-Запускается вместе с сервреом(npm run start:dev) на http://[::1]:3000/api-docs
+Запускается вместе с сервером(npm run start:dev) на http://[::1]:3000/api-docs
