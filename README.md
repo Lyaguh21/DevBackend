@@ -112,12 +112,11 @@ NODE_ENV=development
 
 #
 
-##### Создание контейнера базы даныых:
-
+##### Создание контейнера базы даныых (Docker):
+Эту команду нужно ввести в консоль(в любом месте)
 ```bash
-docker compose up -d
+docker run --hostname=0cb1699e1f46 --mac-address=6a:4e:74:58:55:cb --env=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env=GOSU_VERSION=1.17 --env=JSYAML_VERSION=3.13.1 --env=JSYAML_CHECKSUM=662e32319bdd378e91f67578e56a34954b0a2e33aca11d70ab9f4826af24b941 --env=MONGO_PACKAGE=mongodb-org --env=MONGO_REPO=repo.mongodb.org --env=MONGO_MAJOR=8.0 --env=MONGO_VERSION=8.0.10 --env=HOME=/data/db --env=GLIBC_TUNABLES=glibc.pthread.rseq=0 --volume=/data/configdb --volume=/data/db --network=bridge -p 27017:27017 --restart=no --label='org.opencontainers.image.ref.name=ubuntu' --label='org.opencontainers.image.version=24.04' --runtime=runc -d mongo:latest
 ```
-
 #
 
 ##### Запускаете backend репозиторий
@@ -125,3 +124,8 @@ docker compose up -d
 ```bash
 npm run start:dev
 ```
+
+
+##### Документация к API(Swagger)
+
+Запускается вместе с сервреом(npm run start:dev) на http://[::1]:3000/api-docs
